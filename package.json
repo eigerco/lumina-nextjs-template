@@ -1,0 +1,25 @@
+{
+  "name": "lumina-test",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "as-bind": "^0.8.2",
+    "lumina-node-shim": "file:lumina-node-shim.tar",
+    "lumina-node-wasm": "file:lumina-node-wasm.tgz",
+    "next": "14.2.6",
+    "react": "^18",
+    "react-dom": "^18"
+  },
+  "devDependencies": {
+    "eslint": "^8",
+    "eslint-config-next": "14.2.6",
+    "postcss": "^8",
+    "tailwindcss": "^3.4.1"
+  }
+}
