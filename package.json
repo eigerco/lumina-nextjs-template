@@ -11,7 +11,7 @@
   "dependencies": {
     "as-bind": "^0.8.2",
     "lumina-node-shim": "file:lumina-node-shim.tar",
-    "lumina-node-wasm": "file:lumina-node-wasm.tgz",
+    "lumina-node-wasm": "file:../lumina-main/lumina-node-wasm-0.1.1-FIN.tgz",
     "next": "14.2.6",
     "react": "^18",
     "react-dom": "^18"

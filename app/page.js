@@ -4,36 +4,42 @@ import Image from "next/image";
 import React, {useState, useEffect} from "react";
 import dynamic from 'next/dynamic';
 
-import {Network, NodeConfig} from 'lumina-node-shim';
-import { useWasm }  from './useWasm';
+import init, {Network, NodeConfig, NodeClient} from 'lumina-node-shim';
+
+let worker_started = false;
 
 export default function Home() {
-	const lumina_instance = useWasm();
+	let [node, setNode] = useState();
 
-  return (
-    <main>
-	  <p> Hello there</p>
-	  <button onClick={async () => {
-		  let lumina = await lumina_instance;
-		  console.log("lumina_instance: ", lumina.current);
-		  let current = await lumina.current;
-		  console.log("current: ", current);
-		  let result = await current.is_running();
-		  console.log("running: ", result);
-	  }}>Is running</button>
-	  <br />
-	  <button onClick={async () => {
-		  let config = NodeConfig.default(Network.Mainnet);
-		  console.log("config", config);
+	useEffect(() => {
+		const startWasm = async () => {
+			setNode(await init());
+		};
+		if (!worker_started) {
+			worker_started = true;
+			startWasm();
+		}
+	}, []);
 
-		  let lumina = await lumina_instance;
-		  console.log("lumina_instance: ", lumina.current);
-		  let current = await lumina.current;
-		  console.log("current: ", current);
-		  let result = await current.start(config);
-		  console.log("running: ", result);
+	return (
+		<main>
+		<p> Hello there</p>
+		<button onClick={async () => {
+			console.log("current: ", node);
+			let result = await node.is_running();
+			console.log("running: ", result);
+		}}>Is running</button>
+		<br />
+		<button onClick={async () => {
+			let config = NodeConfig.default(Network.Mocha);
+			console.log("bootnodes", config.bootnodes);
+			console.log("network", config.network);
 
-	  }}>Start</button>
-    </main>
-  );
+			console.log("current: ", node);
+			let result = await node.start(config);
+			console.log("running: ", result);
+
+		}}>Start</button>
+		</main>
+	);
 }
