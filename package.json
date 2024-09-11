@@ -10,13 +10,14 @@
   },
   "dependencies": {
     "as-bind": "^0.8.2",
-    "lumina-node-shim": "file:lumina-node-shim.tar",
-    "lumina-node-wasm": "file:../lumina-main/lumina-node-wasm-0.1.1-FIN.tgz",
+    "lumina-node": "file:../lumina/node-wasm/js/lumina-node-0.2.0.tgz",
+    "lumina-node-wasm": "file:../lumina/node-wasm/pkg/lumina-node-wasm-0.2.0.tgz",
     "next": "14.2.6",
     "react": "^18",
     "react-dom": "^18"
   },
   "devDependencies": {
+    "@types/react": "^18.3.5",
     "eslint": "^8",
     "eslint-config-next": "14.2.6",
     "postcss": "^8",
