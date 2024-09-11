@@ -1,45 +1,41 @@
 "use client";
 
-import Image from "next/image";
-import React, {useState, useEffect} from "react";
-import dynamic from 'next/dynamic';
+import React, { useState, useEffect, useRef } from "react";
 
-import init, {Network, NodeConfig, NodeClient} from 'lumina-node-shim';
-
-let worker_started = false;
+import { spawnNode, Network, NodeConfig } from 'lumina-node';
 
 export default function Home() {
-	let [node, setNode] = useState();
+  let initialized = useRef(false);
+  let [node, setNode] = useState(null);
 
-	useEffect(() => {
-		const startWasm = async () => {
-			setNode(await init());
-		};
-		if (!worker_started) {
-			worker_started = true;
-			startWasm();
-		}
-	}, []);
+  useEffect(() => {
+    const init = async () => {
+      let node = await spawnNode();
+      setNode(node);
+    };
+    if (!initialized.current) {
+      initialized.current = true;
+      init();
+    }
+  }, [node]);
 
-	return (
-		<main>
-		<p> Hello there</p>
-		<button onClick={async () => {
-			console.log("current: ", node);
-			let result = await node.is_running();
-			console.log("running: ", result);
-		}}>Is running</button>
-		<br />
-		<button onClick={async () => {
-			let config = NodeConfig.default(Network.Mocha);
-			console.log("bootnodes", config.bootnodes);
-			console.log("network", config.network);
+  return (
+    <main>
+      <button onClick={async () => {
+        console.log("current: ", node);
+        let result = await node.is_running();
+        console.log("running: ", result);
+      }}>Is running</button>
+      <br />
+      <button onClick={async () => {
+        let config = NodeConfig.default(Network.Mocha);
+        console.log("bootnodes", config.bootnodes);
+        console.log("network", config.network);
 
-			console.log("current: ", node);
-			let result = await node.start(config);
-			console.log("running: ", result);
-
-		}}>Start</button>
-		</main>
-	);
+        console.log("current: ", node);
+        let result = await node.start(config);
+        console.log("running: ", result);
+      }}>Start</button>
+    </main>
+  );
 }
