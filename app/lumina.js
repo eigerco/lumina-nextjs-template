@@ -1,6 +1,6 @@
-import { useRef, useState, useEffect, createContext } from 'react';
+import { useRef, useState, useEffect, createContext } from "react";
 
-import { spawnNode } from 'lumina-node';
+import { spawnNode } from "lumina-node";
 
 export const LuminaContext = createContext(null);
 
@@ -20,9 +20,6 @@ export function LuminaContextProvider({ children }) {
   }, []);
 
   return (
-    <LuminaContext.Provider value={lumina}>
-      {children}
-    </LuminaContext.Provider>
+    <LuminaContext.Provider value={lumina}>{children}</LuminaContext.Provider>
   );
-
 }
