@@ -1,32 +1,37 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useContext } from "react";
 
-import { spawnNode, Network, NodeConfig } from 'lumina-node';
+import { Network, NodeConfig } from 'lumina-node';
+
+import { LuminaContext, LuminaContextProvider } from './lumina'
 
 export default function Home() {
-  let initialized = useRef(false);
-  let [node, setNode] = useState(null);
+  return (
+    <LuminaContextProvider>
+      <Page />
+    </LuminaContextProvider>
+  );
+}
 
-  useEffect(() => {
-    const init = async () => {
-      let node = await spawnNode();
-      setNode(node);
+function Page() {
+  const node = useContext(LuminaContext);
+
+  const [peerTrackerInfo, setPeerTrackerInfo] = useState();
+  const [syncerInfo, setSyncerInfo] = useState();
+
+  const statsUpdateInterval = setInterval(() => {
+    const update = async () => {
+      if (node && await node.isRunning() ){
+        setPeerTrackerInfo(await node.peerTrackerInfo());
+        setSyncerInfo(await node.syncerInfo())
+      }
     };
-    if (!initialized.current) {
-      initialized.current = true;
-      init();
-    }
-  }, [node]);
+    update();
+  }, 1000);
 
   return (
     <main>
-      <button onClick={async () => {
-        console.log("current: ", node);
-        let result = await node.is_running();
-        console.log("running: ", result);
-      }}>Is running</button>
-      <br />
       <button onClick={async () => {
         let config = NodeConfig.default(Network.Mocha);
         console.log("bootnodes", config.bootnodes);
@@ -36,6 +41,25 @@ export default function Home() {
         let result = await node.start(config);
         console.log("running: ", result);
       }}>Start</button>
+
+      <Stats peerTrackerInfo={peerTrackerInfo} syncerInfo={syncerInfo} />
     </main>
   );
 }
+
+function Stats({peerTrackerInfo, syncerInfo}) {
+    if (!peerTrackerInfo || !syncerInfo) {
+      return;
+    }
+
+    return (
+      <div>
+        <div>network head: {syncerInfo.subjective_head.toString()}</div>
+        <div>stored ranges: {syncerInfo.stored_headers.map((range) => {
+          return `${range.start}..${range.end}`;
+        })}</div>
+        <div>peers: {peerTrackerInfo.num_connected_peers.toString()} ({peerTrackerInfo.num_connected_trusted_peers.toString()} trusted)</div>
+      </div>
+    );
+}
+
