@@ -6,14 +6,14 @@ const nextConfig = {
         {
           test: /\.wasm$/,
           type: "asset/resource",
-        }
-      ]
+        },
+      ],
     });
 
-    return config
+    return config;
   },
 
   output: "export",
-}
+};
 
 export default nextConfig;

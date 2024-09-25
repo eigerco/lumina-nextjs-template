@@ -1,41 +1,84 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useContext, useEffect } from "react";
 
-import { spawnNode, Network, NodeConfig } from 'lumina-node';
+import { Network, NodeConfig } from "lumina-node";
+
+import { LuminaContext, LuminaContextProvider } from "./lumina";
 
 export default function Home() {
-  let initialized = useRef(false);
-  let [node, setNode] = useState(null);
+  return (
+    <LuminaContextProvider>
+      <main>
+        <Launcher />
+        <Stats />
+      </main>
+    </LuminaContextProvider>
+  );
+}
 
-  useEffect(() => {
-    const init = async () => {
-      let node = await spawnNode();
-      setNode(node);
-    };
-    if (!initialized.current) {
-      initialized.current = true;
-      init();
-    }
-  }, [node]);
+function Launcher() {
+  const node = useContext(LuminaContext);
 
   return (
-    <main>
-      <button onClick={async () => {
-        console.log("current: ", node);
-        let result = await node.is_running();
-        console.log("running: ", result);
-      }}>Is running</button>
-      <br />
-      <button onClick={async () => {
-        let config = NodeConfig.default(Network.Mocha);
-        console.log("bootnodes", config.bootnodes);
-        console.log("network", config.network);
+    <>
+      {node ?
+        <button
+          onClick={async () => {
+            let config = NodeConfig.default(Network.Mocha);
+            console.log("bootnodes", config.bootnodes);
+            console.log("network", config.network);
 
-        console.log("current: ", node);
-        let result = await node.start(config);
-        console.log("running: ", result);
-      }}>Start</button>
-    </main>
+            console.log("current: ", node);
+            let result = await node.start(config);
+            console.log("running: ", result);
+          }}
+        >
+          Start
+        </button>
+        :
+        <span>Loading...</span>
+      }
+    </>
+  );
+}
+
+function Stats() {
+  const node = useContext(LuminaContext);
+
+  const [peerTrackerInfo, setPeerTrackerInfo] = useState();
+  const [syncerInfo, setSyncerInfo] = useState();
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const update = async () => {
+        if (node && await node.isRunning()) {
+          setPeerTrackerInfo(await node.peerTrackerInfo());
+          setSyncerInfo(await node.syncerInfo());
+        }
+      };
+      update();
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [node]);
+
+  if (!peerTrackerInfo || !syncerInfo) { 
+    return; 
+  }
+
+  return (
+    <div>
+      <div>network head: {syncerInfo.subjective_head.toString()}</div>
+      <div>
+        stored headers:
+        {syncerInfo.stored_headers.map((range) => {
+          return ` ${range.start}..${range.end}`;
+        })}
+      </div>
+      <div>
+        peers: {peerTrackerInfo.num_connected_peers.toString()} (
+        {peerTrackerInfo.num_connected_trusted_peers.toString()} trusted)
+      </div>
+    </div>
   );
 }
