@@ -10,7 +10,8 @@
   },
   "dependencies": {
     "as-bind": "^0.8.2",
-    "lumina-node": "^0.3.0",
+    "lumina-node": "file:../lumina-main/node-wasm/js/lumina-node-0.3.0.tgz",
+    "lumina-node-wasm": "file:../lumina-main/node-wasm/pkg/lumina-node-wasm-0.3.0.tgz",
     "next": "^14.2.13",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
