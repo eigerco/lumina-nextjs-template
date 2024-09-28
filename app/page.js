@@ -22,7 +22,7 @@ function Launcher() {
 
   return (
     <>
-      {node ?
+      {node ? (
         <button
           onClick={async () => {
             let config = NodeConfig.default(Network.Mocha);
@@ -36,9 +36,9 @@ function Launcher() {
         >
           Start
         </button>
-        :
+      ) : (
         <span>Loading...</span>
-      }
+      )}
     </>
   );
 }
@@ -52,7 +52,7 @@ function Stats() {
   useEffect(() => {
     const interval = setInterval(() => {
       const update = async () => {
-        if (node && await node.isRunning()) {
+        if (node && (await node.isRunning())) {
           setPeerTrackerInfo(await node.peerTrackerInfo());
           setSyncerInfo(await node.syncerInfo());
         }
@@ -62,8 +62,8 @@ function Stats() {
     return () => clearInterval(interval);
   }, [node]);
 
-  if (!peerTrackerInfo || !syncerInfo) { 
-    return; 
+  if (!peerTrackerInfo || !syncerInfo) {
+    return;
   }
 
   return (
