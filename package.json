@@ -11,14 +11,14 @@
   "dependencies": {
     "as-bind": "^0.8.2",
     "lumina-node": "^0.3.0",
-    "next": "^14.2.13",
+    "next": "^15.5.10",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },
   "devDependencies": {
     "@types/react": "^18.3.5",
     "eslint": "^8",
-    "eslint-config-next": "^14.2.13",
+    "eslint-config-next": "^16.1.6",
     "postcss": "^8",
     "tailwindcss": "^3.4.1"
   }
